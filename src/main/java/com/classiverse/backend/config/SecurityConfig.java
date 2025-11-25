@@ -24,7 +24,7 @@ public class SecurityConfig {
 
                 // 3. 모든 HTTP 요청에 대해 인증 없이 접근 허용 (개발용)
                 // - JWT 도입 후에는 여기에서 /api/auth/**, /swagger 등만 permitAll,
-                //   나머지는 authenticated()로 단계적으로 잠글 예정
+                //   나머지는 authenticated()로 단계적으로 잠글 예정. 다음 구현때 할 예정
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().permitAll()
                 );

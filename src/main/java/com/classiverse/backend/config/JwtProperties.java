@@ -1,17 +1,39 @@
+// com.classiverse.backend.config.JwtProperties
 package com.classiverse.backend.config;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
-@Getter
-@Setter
-@Configuration
+@Component
 @ConfigurationProperties(prefix = "jwt")
 public class JwtProperties {
 
-    private String secret;              // 서명용 비밀키
-    private long accessTokenValidity;   // 액세스 토큰 만료(ms)
-    private long refreshTokenValidity;  // 리프레시 토큰 만료(ms)
+    private String secret;
+    private long accessTokenValidity;
+    private long refreshTokenValidity;
+
+    public String getSecret() {
+        return secret;
+    }
+
+    public long getAccessTokenValidity() {
+        return accessTokenValidity;
+    }
+
+    public long getRefreshTokenValidity() {
+        return refreshTokenValidity;
+    }
+
+    // setter는 @ConfigurationProperties 바인딩용
+    public void setSecret(String secret) {
+        this.secret = secret;
+    }
+
+    public void setAccessTokenValidity(long accessTokenValidity) {
+        this.accessTokenValidity = accessTokenValidity;
+    }
+
+    public void setRefreshTokenValidity(long refreshTokenValidity) {
+        this.refreshTokenValidity = refreshTokenValidity;
+    }
 }

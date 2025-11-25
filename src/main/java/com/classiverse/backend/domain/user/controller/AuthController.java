@@ -19,7 +19,7 @@ public class AuthController {
 
     private final AuthService authService;
 
-    //카카오 로그인 - state 생성 → 세션에 저장 → 카카오 authorize URL로 리다이렉트
+    // 카카오 로그인 시작  - state 생성 → 세션에 저장 → 카카오 authorize URL로 리다이렉트
     @GetMapping("/kakao/login")
     public ResponseEntity<Void> kakaoLogin(HttpServletRequest request) {
         String state = generateState();
@@ -33,7 +33,7 @@ public class AuthController {
                 .build();
     }
 
-    // 카카오 콜백 - code, state 파라미터 수신 -> state 검증 후 AuthService.loginWithKakao 호출
+    // 카카오 콜백-code, state 파라미터 수신-state 검증 후 AuthService.loginWithKakao 호출
     @GetMapping("/kakao/callback")
     public ResponseEntity<UserAuthDto.AuthResponse> kakaoCallback(
             @RequestParam("code") String code,
@@ -58,7 +58,7 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    // 액세스 토큰 재발급 (리프레시 토큰 사용)-JWT 도입 후 AuthService.refreshToken 구현 예정
+    // 액세스 토큰 재발급 (리프레시 토큰 사용) - JWT 도입 후 AuthService.refreshToken 구현 예정
     @PostMapping("/refresh")
     public ResponseEntity<UserAuthDto.AuthResponse> refreshToken(
             @RequestBody UserAuthDto.RefreshTokenRequest request
@@ -67,7 +67,7 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
-    // ====== state 생성 유틸 ======
+    // state 생성
 
     private String generateState() {
         byte[] bytes = new byte[16];

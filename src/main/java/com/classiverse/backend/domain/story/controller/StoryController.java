@@ -1,0 +1,26 @@
+package com.classiverse.backend.domain.story.controller;
+
+import com.classiverse.backend.domain.story.dto.StoryResponseDto;
+import com.classiverse.backend.domain.story.service.StoryService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequiredArgsConstructor
+public class StoryController {
+
+    private final StoryService storyService;
+
+    // 스토리 목록 조회 API
+    // GET /api/books/{bookId}/stories
+    @GetMapping("/api/books/{bookId}/stories")
+    public ResponseEntity<List<StoryResponseDto>> getStoriesByBook(@PathVariable Long bookId) {
+        List<StoryResponseDto> response = storyService.getStoriesByBookId(bookId);
+        return ResponseEntity.ok(response);
+    }
+}

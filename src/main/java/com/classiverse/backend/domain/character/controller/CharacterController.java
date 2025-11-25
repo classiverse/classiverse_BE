@@ -1,6 +1,7 @@
 package com.classiverse.backend.domain.character.controller;
 
 import com.classiverse.backend.domain.character.dto.CharacterResponseDto;
+import com.classiverse.backend.domain.character.dto.CharacterDetailResponseDto;
 import com.classiverse.backend.domain.character.service.CharacterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,19 @@ public class CharacterController {
         Long tempUserId = 1L; // 임시 유저 ID
 
         List<CharacterResponseDto> response = characterService.getCharactersByBook(bookId, tempUserId);
+        return ResponseEntity.ok(response);
+    }
+
+    // 캐릭터 상세 정보 조회 API
+    // GET /api/books/{bookId}/characters/{characterId}
+    @GetMapping("/api/books/{bookId}/characters/{characterId}")
+    public ResponseEntity<CharacterDetailResponseDto> getCharacterDetail(
+            @PathVariable Long bookId,
+            @PathVariable Long characterId) {
+
+        Long tempUserId = 1L; // 임시 유저 ID
+
+        CharacterDetailResponseDto response = characterService.getCharacterDetail(bookId, characterId, tempUserId);
         return ResponseEntity.ok(response);
     }
 }

@@ -5,11 +5,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public interface ClosenessRepository extends JpaRepository<Closeness, Long> { // ID 타입은 복합키라 수정 필요할 수도 있지만, 조회만 할 거면 일단 둡니다.
+public interface ClosenessRepository extends JpaRepository<Closeness, Long> {
 
-    // 해석: 특정 유저(UserId)가 특정 책(BookId)에 속한 캐릭터와 맺은 관계들을 다 찾아줘
-    // Closeness -> Character -> Book 으로 연결해서 찾습니다.
+    // Closeness -> Character -> Book 으로 연결해서 찾
     List<Closeness> findByUser_UserIdAndCharacter_Book_BookId(Long userId, Long bookId);
+    // 단건 조회용: 내(User)가 이 캐릭터(Character)랑 얼마나 친한지
+    Optional<Closeness> findByUser_UserIdAndCharacter_CharId(Long userId, Long charId);
 }

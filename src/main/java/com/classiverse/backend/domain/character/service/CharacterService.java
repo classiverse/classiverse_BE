@@ -5,6 +5,7 @@ import com.classiverse.backend.domain.character.entity.StoryCharacter;
 import com.classiverse.backend.domain.character.repository.StoryCharacterRepository;
 import com.classiverse.backend.domain.closeness.entity.Closeness;
 import com.classiverse.backend.domain.closeness.repository.ClosenessRepository;
+import com.classiverse.backend.domain.character.dto.CharacterDetailResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,5 +43,26 @@ public class CharacterService {
                     return new CharacterResponseDto(character, score);
                 })
                 .collect(Collectors.toList());
+    }
+
+    // 캐릭터 상세 정보 조회
+    @Transactional(readOnly = true)
+    public CharacterDetailResponseDto getCharacterDetail(Long bookId, Long characterId, Long userId) {
+        // 1. 캐릭터 조회 (없으면 에러)
+        StoryCharacter character = storyCharacterRepository.findById(characterId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 캐릭터를 찾을 수 없습니다. id=" + characterId));
+
+        // (선택) URL의 bookId와 캐릭터의 실제 bookId가 다르면 에러 처리 (데이터 무결성 체크)
+        if (!character.getBook().getBookId().equals(bookId)) {
+            throw new IllegalArgumentException("이 책에 속한 캐릭터가 아닙니다.");
+        }
+
+        // 2. 친밀도 조회 (없으면 0점 처리)
+        Integer closenessScore = closenessRepository.findByUser_UserIdAndCharacter_CharId(userId, characterId)
+                .map(Closeness::getCloseness)
+                .orElse(0);
+
+        // 3. DTO 반환
+        return new CharacterDetailResponseDto(character, closenessScore);
     }
 }

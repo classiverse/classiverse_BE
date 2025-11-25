@@ -18,6 +18,10 @@ public class User extends BaseTimeEntity {
     @Column(name = "user_id")
     private Long userId;
 
+    // 카카오 고유 유저 ID (카카오 /v2/user/me 에서 내려주는 id)
+    @Column(name = "kakao_user_id", unique = true)
+    private Long kakaoUserId;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "kakao_user", nullable = false)
     private YnType kakaoUser = YnType.N;
@@ -33,5 +37,12 @@ public class User extends BaseTimeEntity {
         this.nickname = nickname;
         this.kakaoUser = kakaoUser;
         this.appleUser = appleUser;
+    }
+
+    public User(String nickname, YnType kakaoUser, YnType appleUser, Long kakaoUserId) {
+        this.nickname = nickname;
+        this.kakaoUser = kakaoUser;
+        this.appleUser = appleUser;
+        this.kakaoUserId = kakaoUserId;
     }
 }

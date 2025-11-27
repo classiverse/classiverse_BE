@@ -5,10 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c3c5b32f-d5c9-41d8-9212-26d2ff452413" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/classiverse/backend/domain/story/dto/StoryContentResponseDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/classiverse/backend/domain/story/repository/StoryContentRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/classiverse/backend/domain/story/controller/StoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/classiverse/backend/domain/story/controller/StoryController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/classiverse/backend/domain/story/dto/StoryContentResponseDto.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/classiverse/backend/domain/story/dto/StoryContentResponseDto.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/classiverse/backend/domain/story/entity/StoryContent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/classiverse/backend/domain/story/entity/StoryContent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/classiverse/backend/domain/story/service/StoryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/classiverse/backend/domain/story/service/StoryService.java" afterDir="false" />
     </list>
@@ -32,7 +30,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="refactor/#14-kakao-login-apply" />
+        <entry key="$PROJECT_DIR$" value="feature/#19-closeness-update" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -72,7 +70,7 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "Spring Boot.ClassiverseBackendApplication.executor": "Run",
-    "git-widget-placeholder": "feature/#16-story-viewer",
+    "git-widget-placeholder": "refactor/#20-contents-switching",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/Users/moongeun/Documents/IntelliJProjects/classiverse_BE/src/main/java/com/classiverse/backend/domain/reading",
     "node.js.detected.package.eslint": "true",

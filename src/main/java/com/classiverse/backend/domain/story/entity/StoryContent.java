@@ -35,6 +35,13 @@ public class StoryContent extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
+    // 리액션 버튼 텍스트
     private String reaction1;
     private String reaction2;
+
+    @Column(name = "next_content_id_1")
+    private Long nextContentId1;
+
+    @Column(name = "next_content_id_2")
+    private Long nextContentId2;
 }

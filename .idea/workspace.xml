@@ -5,14 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c3c5b32f-d5c9-41d8-9212-26d2ff452413" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/classiverse/backend/domain/story/dto/CharacterIntroDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/classiverse/backend/domain/story/dto/StoryIntroResponseDto.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/classiverse/backend/domain/story/repository/StoryIntroRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/classiverse/backend/domain/story/dto/StoryContentResponseDto.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/classiverse/backend/domain/story/repository/StoryContentRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/classiverse/backend/domain/story/controller/StoryController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/classiverse/backend/domain/story/controller/StoryController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/classiverse/backend/domain/story/entity/StoryContent.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/classiverse/backend/domain/story/entity/StoryContent.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/classiverse/backend/domain/story/service/StoryService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/classiverse/backend/domain/story/service/StoryService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -75,7 +72,7 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "Spring Boot.ClassiverseBackendApplication.executor": "Run",
-    "git-widget-placeholder": "feature/#13-story-intro",
+    "git-widget-placeholder": "feature/#16-story-viewer",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "/Users/moongeun/Documents/IntelliJProjects/classiverse_BE/src/main/java/com/classiverse/backend/domain/reading",
     "node.js.detected.package.eslint": "true",

@@ -51,26 +51,18 @@ public class StoryService {
     @Transactional(readOnly = true)
     public StoryContentResponseDto getStoryContent(Long storyId, Long characterId, Long contentId) {
         // 1. 현재 콘텐츠 조회
-        StoryContent currentContent = storyContentRepository.findById(contentId)
+        StoryContent content = storyContentRepository.findById(contentId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 내용을 찾을 수 없습니다. id=" + contentId));
 
-        // 데이터 무결성 검증 (생략 가능하지만 안전을 위해 유지)
-        if (!currentContent.getStory().getStoryId().equals(storyId)) {
+        // 2. 데이터 무결성 검증
+        if (!content.getStory().getStoryId().equals(storyId)) {
             throw new IllegalArgumentException("이 스토리에 속한 내용이 아닙니다.");
         }
-        if (!currentContent.getCharacter().getCharId().equals(characterId)) {
+        if (!content.getCharacter().getCharId().equals(characterId)) {
             throw new IllegalArgumentException("이 캐릭터의 시점이 아닙니다.");
         }
 
-        // 2. 다음 페이지 ID 조회 (Next)
-        StoryContent nextContent = storyContentRepository.findFirstByStory_StoryIdAndCharacter_CharIdAndSeqGreaterThanOrderBySeqAsc(
-                storyId, characterId, currentContent.getSeq()
-        ).orElse(null);
-
-        // 3. ID 추출 (없으면 null -> 마지막 페이지)
-        Long nextId = (nextContent != null) ? nextContent.getContentId() : null;
-
-        // 4. DTO 반환
-        return new StoryContentResponseDto(currentContent, nextId);
+        // 3. DTO 반환
+        return new StoryContentResponseDto(content);
     }
 }

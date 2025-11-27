@@ -13,29 +13,39 @@ public class StoryContentResponseDto {
     private String storyTitle;
     private Long charId;
     private String characterName;
-    private String header;   // 강조 문구
-    private String content;  // 본문
-    private List<String> reactions; // 버튼 텍스트 리스트
+    private String header;
+    private String content;
 
-    // 다음 페이지 ID
-    private Long nextContentId;
+    // 버튼 정보 (텍스트 + 이동할 ID)
+    private List<ReactionDto> reactions;
 
-    public StoryContentResponseDto(StoryContent storyContent, Long nextContentId) {
+    @Getter
+    public static class ReactionDto {
+        private String text;   // 버튼에 뜰 글자
+        private Long nextId;   // 이동할 ID
+
+        public ReactionDto(String text, Long nextId) {
+            this.text = text;
+            this.nextId = nextId;
+        }
+    }
+
+    public StoryContentResponseDto(StoryContent storyContent) {
         this.storyTitle = storyContent.getStory().getTitle();
         this.charId = storyContent.getCharacter().getCharId();
         this.characterName = storyContent.getCharacter().getName();
         this.header = storyContent.getHeader();
         this.content = storyContent.getContent();
 
-        this.nextContentId = nextContentId;
 
-        // 리액션 버튼 텍스트 담기
         this.reactions = new ArrayList<>();
+
         if (storyContent.getReaction1() != null) {
-            this.reactions.add(storyContent.getReaction1());
+            this.reactions.add(new ReactionDto(storyContent.getReaction1(), storyContent.getNextContentId1()));
         }
+
         if (storyContent.getReaction2() != null) {
-            this.reactions.add(storyContent.getReaction2());
+            this.reactions.add(new ReactionDto(storyContent.getReaction2(), storyContent.getNextContentId2()));
         }
     }
 }

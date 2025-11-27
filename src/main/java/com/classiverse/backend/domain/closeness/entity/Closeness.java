@@ -27,4 +27,19 @@ public class Closeness extends BaseTimeEntity {
 
     @Column(nullable = false)
     private Integer closeness = 0;
+
+    public Closeness(User user, StoryCharacter character, Integer closeness) {
+        this.user = user;
+        this.character = character;
+        this.closeness = closeness;
+    }
+
+    // 점수 변경 로직
+    public void updateScore(int score) {
+        this.closeness = score;
+    }
+
+    public void addScore(int amount) {
+        this.closeness += amount;
+    }
 }

@@ -32,4 +32,11 @@ public class ReadingProgress extends BaseTimeEntity {
     @JoinColumn(name = "char_id")
     private StoryCharacter character;
     private LocalDateTime finishedAt;
+
+    public ReadingProgress(User user, Story story, StoryCharacter character, LocalDateTime finishedAt) {
+        this.user = user;
+        this.story = story;
+        this.character = character;
+        this.finishedAt = finishedAt;
+    }
 }

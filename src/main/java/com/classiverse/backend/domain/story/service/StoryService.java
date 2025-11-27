@@ -1,7 +1,11 @@
 package com.classiverse.backend.domain.story.service;
 
 import com.classiverse.backend.domain.story.dto.StoryResponseDto;
+import com.classiverse.backend.domain.story.repository.StoryIntroRepository;
 import com.classiverse.backend.domain.story.repository.StoryRepository;
+import com.classiverse.backend.domain.story.dto.CharacterIntroDto;
+import com.classiverse.backend.domain.story.dto.StoryIntroResponseDto;
+import com.classiverse.backend.domain.story.entity.Story;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +18,7 @@ import java.util.stream.Collectors;
 public class StoryService {
 
     private final StoryRepository storyRepository;
+    private final StoryIntroRepository storyIntroRepository;
 
     @Transactional(readOnly = true)
     public List<StoryResponseDto> getStoriesByBookId(Long bookId) {
@@ -22,5 +27,21 @@ public class StoryService {
                 .stream()
                 .map(StoryResponseDto::new)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public StoryIntroResponseDto getStoryIntros(Long storyId) {
+        // 1. 스토리 제목 조회 (없으면 에러)
+        Story story = storyRepository.findById(storyId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 스토리를 찾을 수 없습니다. id=" + storyId));
+
+        // 2. 해당 스토리의 캐릭터 소개 리스트 조회
+        List<CharacterIntroDto> intros = storyIntroRepository.findAllByStory_StoryIdOrderByCharacter_CharIdAsc(storyId)
+                .stream()
+                .map(CharacterIntroDto::new)
+                .collect(Collectors.toList());
+
+        // 3. 제목과 리스트를 묶어서 반환
+        return new StoryIntroResponseDto(story.getTitle(), intros);
     }
 }

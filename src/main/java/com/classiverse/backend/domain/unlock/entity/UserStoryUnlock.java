@@ -32,4 +32,13 @@ public class UserStoryUnlock extends BaseTimeEntity {
     private YnType unlocked = YnType.N;
 
     private LocalDateTime unlockedAt;
+
+    public UserStoryUnlock(User user, Story story, YnType unlocked) {
+        this.user = user;
+        this.story = story;
+        this.unlocked = unlocked;
+        if (unlocked == YnType.Y) {
+            this.unlockedAt = LocalDateTime.now();
+        }
+    }
 }

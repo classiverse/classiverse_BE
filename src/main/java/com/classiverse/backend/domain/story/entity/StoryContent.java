@@ -29,6 +29,9 @@ public class StoryContent extends BaseTimeEntity {
     @Column(nullable = false)
     private Integer seq;
 
+    @Column(length = 255)
+    private String header;
+
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 

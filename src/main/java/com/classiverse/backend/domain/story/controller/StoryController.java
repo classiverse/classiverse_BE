@@ -1,5 +1,6 @@
 package com.classiverse.backend.domain.story.controller;
 
+import com.classiverse.backend.domain.story.dto.StoryIntroResponseDto;
 import com.classiverse.backend.domain.story.dto.StoryResponseDto;
 import com.classiverse.backend.domain.story.service.StoryService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,14 @@ public class StoryController {
     @GetMapping("/api/books/{bookId}/stories")
     public ResponseEntity<List<StoryResponseDto>> getStoriesByBook(@PathVariable Long bookId) {
         List<StoryResponseDto> response = storyService.getStoriesByBookId(bookId);
+        return ResponseEntity.ok(response);
+    }
+
+    // 스토리별 캐릭터 소개 API
+    // GET /api/stories/{storyId}/intro
+    @GetMapping("/api/stories/{storyId}/intro")
+    public ResponseEntity<StoryIntroResponseDto> getStoryIntros(@PathVariable Long storyId) {
+        StoryIntroResponseDto response = storyService.getStoryIntros(storyId);
         return ResponseEntity.ok(response);
     }
 }

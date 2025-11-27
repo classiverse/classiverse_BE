@@ -13,4 +13,7 @@ public interface ReadingProgressRepository extends JpaRepository<ReadingProgress
 
     // 이미 읽은 기록이 있는지 확인 (중복 저장 방지용)
     boolean existsByUser_UserIdAndStory_StoryIdAndCharacter_CharId(Long userId, Long storyId, Long charId);
+
+    // 특정 유저가 특정 스토리를 (어떤 캐릭터로든) 읽은 적이 있는지 확인
+    boolean existsByUser_UserIdAndStory_StoryId(Long userId, Long storyId);
 }

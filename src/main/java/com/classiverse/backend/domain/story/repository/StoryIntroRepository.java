@@ -5,10 +5,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface StoryIntroRepository extends JpaRepository<StoryIntro, Long> {
 
-    // StoryId로 조회하되, 캐릭터 ID 순서대로 정렬 (Order By Character_CharId Asc)
     List<StoryIntro> findAllByStory_StoryIdOrderByCharacter_CharIdAsc(Long storyId);
+
+    Optional<StoryIntro> findByStory_StoryIdAndCharacter_CharId(Long storyId, Long charId);
 }

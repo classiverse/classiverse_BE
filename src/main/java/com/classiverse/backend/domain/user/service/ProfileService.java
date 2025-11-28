@@ -2,6 +2,7 @@ package com.classiverse.backend.domain.user.service;
 
 import com.classiverse.backend.domain.book.entity.Book;
 import com.classiverse.backend.domain.category.entity.Category;
+import com.classiverse.backend.domain.character.dto.CharacterResponseDto;
 import com.classiverse.backend.domain.character.entity.StoryCharacter;
 import com.classiverse.backend.domain.closeness.entity.Closeness;
 import com.classiverse.backend.domain.closeness.repository.ClosenessRepository;
@@ -33,7 +34,7 @@ public class ProfileService {
         List<Closeness> closenessList =
                 closenessRepository.findWithAllRelationsByUserAndClosenessGreaterThan(user, 0);
 
-        // 3) 엔티티 → DTO 매핑
+        // 3) 엔티티 → DTO 매핑 (프로필 요약용)
         List<ProfileFriendDto> friends = closenessList.stream()
                 .map(c -> {
                     StoryCharacter character = c.getCharacter();
@@ -52,6 +53,20 @@ public class ProfileService {
                 .toList();
 
         return new ProfileMeResponseDto(user.getNickname(), friends);
+    }
+
+    // CharacterResponseDto(charId, name, closeness) 재사용
+
+    public List<CharacterResponseDto> getMyCharacters(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 사용자입니다. id=" + userId));
+
+        List<Closeness> closenessList =
+                closenessRepository.findWithAllRelationsByUserAndClosenessGreaterThan(user, 0);
+
+        return closenessList.stream()
+                .map(c -> new CharacterResponseDto(c.getCharacter(), c.getCloseness()))
+                .toList();
     }
 
     @Transactional

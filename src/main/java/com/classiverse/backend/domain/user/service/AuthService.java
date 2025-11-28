@@ -10,7 +10,6 @@ import com.classiverse.backend.domain.user.repository.UserRefreshTokenRepository
 import com.classiverse.backend.domain.user.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -72,7 +71,6 @@ public class AuthService {
     }
 
     // 리프레시 토큰으로 액세스 토큰 재발급 - 토큰 서명/만료 검증, DB 에 저장된 리프레시 토큰인지 확인
-
     public UserAuthDto.AuthResponse refreshToken(String refreshToken) {
         // 1) 형식/서명/만료 검증
         if (!jwtProvider.isTokenValid(refreshToken)) {
@@ -112,6 +110,34 @@ public class AuthService {
         userRefreshTokenRepository.save(saved);
 
         return new UserAuthDto.AuthResponse(newAccessToken, newRefreshToken, user.getNickname());
+    }
+
+    // 로그아웃: 리프레시 토큰을 기반으로 해당 유저의 서버 측 세션(리프레시 토큰) 제거
+    public void logout(String refreshToken) {
+        if (refreshToken == null || refreshToken.isBlank()) {
+            throw new IllegalArgumentException("리프레시 토큰이 비어 있습니다.");
+        }
+
+        // 1) 형식/서명/만료 검증
+        if (!jwtProvider.isTokenValid(refreshToken)) {
+            throw new IllegalArgumentException("유효하지 않은 리프레시 토큰입니다.");
+        }
+
+        // 2) 토큰 타입 확인
+        String type = jwtProvider.getTokenType(refreshToken);
+        if (!"REFRESH".equals(type)) {
+            throw new IllegalArgumentException("리프레시 토큰이 아닙니다.");
+        }
+
+        // 3) 토큰에서 userId 추출 후 유저 확인
+        Long userId = jwtProvider.getUserId(refreshToken);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("존재하지 않는 사용자입니다."));
+
+        // 4) 해당 유저의 리프레시 토큰 삭제
+        //    - 현재 설계 상 한 유저당 한 개의 리프레시 토큰만 유지하므로
+        //      deleteByUser 로 모두 제거해도 무방합니다.
+        userRefreshTokenRepository.deleteByUser(user);
     }
 
     private KakaoTokenResponse requestKakaoToken(String code) {

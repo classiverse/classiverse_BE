@@ -68,6 +68,18 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
 
+    // 로그아웃 - 리프레시 토큰을 기반으로 서버 측 세션(리프레시 토큰) 제거
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(
+            @RequestBody UserAuthDto.RefreshTokenRequest request
+    ) {
+        authService.logout(request.getRefreshToken());
+        // 클라이언트에서는 이 응답을 받으면
+        // - 저장된 accessToken/refreshToken 삭제
+        // - (필요시) 프론트에서 Kakao JS SDK 로그아웃 등 추가 처리
+        return ResponseEntity.noContent().build(); // 204 No Content
+    }
+
     // state 생성
     private String generateState() {
         byte[] bytes = new byte[16];

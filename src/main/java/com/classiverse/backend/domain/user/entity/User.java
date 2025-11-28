@@ -30,8 +30,12 @@ public class User extends BaseTimeEntity {
     @Column(name = "apple_user", nullable = false)
     private YnType appleUser = YnType.N;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 20, unique = true)
     private String nickname;
+
+    public void changeNickname(String nickname) {
+        this.nickname = nickname;
+    }
 
     public User(String nickname, YnType kakaoUser, YnType appleUser) {
         this.nickname = nickname;

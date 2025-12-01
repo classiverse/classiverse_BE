@@ -4,7 +4,7 @@ import com.classiverse.backend.domain.story.dto.StoryContentResponseDto;
 import com.classiverse.backend.domain.story.dto.StoryIntroResponseDto;
 import com.classiverse.backend.domain.story.dto.StoryResponseDto;
 import com.classiverse.backend.domain.story.service.StoryService;
-import com.classiverse.backend.domain.user.entity.User;
+import com.classiverse.backend.domain.user.security.CustomUserPrincipal; // [추가] 인증 객체 타입 변경
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,10 +25,11 @@ public class StoryController {
     @GetMapping("/api/books/{bookId}/stories")
     public ResponseEntity<List<StoryResponseDto>> getStoriesByBook(
             @PathVariable Long bookId,
-            @AuthenticationPrincipal User user
+            @AuthenticationPrincipal CustomUserPrincipal principal // [수정] User -> CustomUserPrincipal 변경 (필터와 타입 일치)
     ) {
-        // 임시 유저 ID 처리 (로그인 미구현 시 1L 사용)
-        Long userId = (user != null) ? user.getUserId() : 1L;
+
+        // SecurityConfig에서 인증된 요청만 들어오므로 principal은 null이 아님을 보장받음
+        Long userId = principal.getUserId();
 
         // Service 호출 시 userId 전달
         List<StoryResponseDto> response = storyService.getStoriesByBookId(bookId, userId);
@@ -40,10 +41,10 @@ public class StoryController {
     @GetMapping("/api/stories/{storyId}/intro")
     public ResponseEntity<StoryIntroResponseDto> getStoryIntros(
             @PathVariable Long storyId,
-            @AuthenticationPrincipal User user // ★ 유저 정보 받기
+            @AuthenticationPrincipal CustomUserPrincipal principal // [수정] User -> CustomUserPrincipal 변경
     ) {
-        // 임시 유저 ID
-        Long userId = (user != null) ? user.getUserId() : 1L;
+        // 실제 유저 ID 추출
+        Long userId = principal.getUserId();
 
         // Service에 userId 전달
         StoryIntroResponseDto response = storyService.getStoryIntros(storyId, userId);

@@ -2,7 +2,7 @@ package com.classiverse.backend.domain.reading.controller;
 
 import com.classiverse.backend.domain.reading.dto.ReadingCompleteDto;
 import com.classiverse.backend.domain.reading.service.ReadingService;
-import com.classiverse.backend.domain.user.entity.User;
+import com.classiverse.backend.domain.user.security.CustomUserPrincipal; // [추가] 인증 객체 타입 변경
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,10 +22,10 @@ public class ReadingController {
     public ResponseEntity<ReadingCompleteDto> completeStory(
             @PathVariable Long storyId,
             @PathVariable Long characterId,
-            @AuthenticationPrincipal User user
+            @AuthenticationPrincipal CustomUserPrincipal principal // [수정] User -> CustomUserPrincipal 변경
     ) {
-        // 임시 유저 ID 처리 (로그인 미구현 시)
-        Long userId = (user != null) ? user.getUserId() : 1L;
+        // 실제 유저 ID 추출
+        Long userId = principal.getUserId();
 
         ReadingCompleteDto response = readingService.completeReading(storyId, characterId, userId);
         return ResponseEntity.ok(response);

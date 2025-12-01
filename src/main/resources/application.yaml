@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: classiverse-be
+  profiles:
+    active: local
+
+  jpa:
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true

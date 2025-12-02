@@ -64,26 +64,30 @@ public class StoryService {
     }
 
     @Transactional(readOnly = true)
-    // ★ 수정: userId 파라미터 추가
     public StoryIntroResponseDto getStoryIntros(Long storyId, Long userId) {
-        // 1. 스토리 조회
+        // 1. 스토리 조회 (잠금 확인 로직 포함 - 기존 유지)
         Story story = storyRepository.findById(storyId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 스토리를 찾을 수 없습니다. id=" + storyId));
 
-        // 잠금 여부 확인 로직
-        // 조건: 에피소드 4화 이상인데 + 해금 기록이 없으면 -> 예외 발생!
         if (story.getEpisodeNum() > 3) {
-            boolean isUnlocked = userStoryUnlockRepository.existsByUser_UserIdAndStory_StoryId(userId, storyId);
-            if (!isUnlocked) {
-                // 여기서 에러를 터뜨리면 -> 컨트롤러가 500 또는 400 에러를 리턴하게 됨
+            if (!userStoryUnlockRepository.existsByUser_UserIdAndStory_StoryId(userId, storyId)) {
                 throw new IllegalArgumentException("이 스토리는 잠겨있습니다. 이전 에피소드를 먼저 완료해주세요.");
             }
         }
 
-        // 2. (기존 로직) 캐릭터 소개 리스트 조회
+        // 2. 캐릭터 소개 리스트 조회 및 DTO 변환 (여기가 핵심!)
         List<CharacterIntroDto> intros = storyIntroRepository.findAllByStory_StoryIdOrderByCharacter_CharIdAsc(storyId)
                 .stream()
-                .map(CharacterIntroDto::new)
+                .map(intro -> {
+                    // ★ 각 캐릭터(intro)에 맞는 첫 번째 콘텐츠 ID를 찾습니다.
+                    Long firstContentId = storyContentRepository
+                            .findFirstByStory_StoryIdAndCharacter_CharIdOrderBySeqAsc(storyId, intro.getCharacter().getCharId())
+                            .map(StoryContent::getContentId)
+                            .orElse(null); // 콘텐츠가 없으면 null
+
+                    // ID를 포함하여 DTO 생성
+                    return new CharacterIntroDto(intro, firstContentId);
+                })
                 .collect(Collectors.toList());
 
         // 3. 반환

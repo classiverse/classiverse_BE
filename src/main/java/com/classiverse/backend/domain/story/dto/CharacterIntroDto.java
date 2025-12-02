@@ -11,14 +11,18 @@ public class CharacterIntroDto {
     private Long charId;
     private String characterName;
     private String introText;
-    private YnType isLeader; // "Y" or "N"
+    private YnType isLeader;
     private String charImage;
+    private Long firstContentId;
 
-    public CharacterIntroDto(StoryIntro storyIntro) {
+    public CharacterIntroDto(StoryIntro storyIntro, Long firstContentId) {
         this.charId = storyIntro.getCharacter().getCharId();
         this.characterName = storyIntro.getCharacter().getName();
         this.introText = storyIntro.getIntroText();
         this.isLeader = storyIntro.getIsLeader();
         this.charImage = storyIntro.getCharacter().getCharImage();
+
+        // ★ [추가]
+        this.firstContentId = firstContentId;
     }
 }

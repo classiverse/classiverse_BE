@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import java.util.List;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +27,15 @@ public class AuthService {
     private final UserRepository userRepository;
     private final UserRefreshTokenRepository userRefreshTokenRepository;
     private final JwtProvider jwtProvider;
+
+    private static final List<String> RANDOM_PROFILE_IMAGES = List.of(
+            "https://classiverse-storage.s3.ap-northeast-2.amazonaws.com/profile_1.png",
+            "https://classiverse-storage.s3.ap-northeast-2.amazonaws.com/profile_2.png",
+            "https://classiverse-storage.s3.ap-northeast-2.amazonaws.com/profile_3.png",
+            "https://classiverse-storage.s3.ap-northeast-2.amazonaws.com/profile_4.png"
+    );
+
+    private final Random random = new Random();
 
     // 카카오 로그인 시작 시 authorize URL 생성
     public String buildKakaoAuthorizeUrl(String state) {
@@ -188,11 +199,16 @@ public class AuthService {
         // 초기 가입 시에는 임시 닉네임을 하나 넣음 - 우리 서비스 닉네임과는 별도
         String tempNickname = "클라시버스 유저_" + kakaoUserId;
 
+        // 랜덤으로 하나 뽑기 (0 ~ 3 사이의 난수 생성)
+        int randomIndex = random.nextInt(RANDOM_PROFILE_IMAGES.size());
+        String selectedImage = RANDOM_PROFILE_IMAGES.get(randomIndex);
+
         User user = new User(
                 tempNickname,
                 YnType.Y,      // kakaoUser = Y
                 YnType.N,      // appleUser = N
-                kakaoUserId
+                kakaoUserId,
+                selectedImage // <-- 여기에 넣어서 저장!
         );
         return userRepository.save(user);
     }

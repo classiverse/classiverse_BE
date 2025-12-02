@@ -52,7 +52,11 @@ public class ProfileService {
                 })
                 .toList();
 
-        return new ProfileMeResponseDto(user.getNickname(), friends);
+        return new ProfileMeResponseDto(
+                user.getNickname(),
+                user.getProfileImage(), // 추가된 부분!
+                friends
+        );
     }
 
     // CharacterResponseDto(charId, name, closeness) 재사용

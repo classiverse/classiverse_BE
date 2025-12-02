@@ -9,5 +9,6 @@ import lombok.Getter;
 public class ProfileMeResponseDto {
 
     private final String nickname;
+    private final String profileImage;
     private final List<ProfileFriendDto> friends;
 }

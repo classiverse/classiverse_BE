@@ -10,4 +10,6 @@ public class ReadingCompleteDto {
     private String characterName;   // 캐릭터 이름
     private Integer currentCloseness; // 현재 친밀도
     private String finalText;       // 캐릭터의 마지막 한마디
+    private String charImage;
+    private Long bookId;
 }

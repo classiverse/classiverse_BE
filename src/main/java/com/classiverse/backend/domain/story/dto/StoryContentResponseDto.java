@@ -15,6 +15,7 @@ public class StoryContentResponseDto {
     private String characterName;
     private String header;
     private String content;
+    private String charVideo;
 
     // 버튼 정보 (텍스트 + 이동할 ID)
     private List<ReactionDto> reactions;
@@ -36,6 +37,7 @@ public class StoryContentResponseDto {
         this.characterName = storyContent.getCharacter().getName();
         this.header = storyContent.getHeader();
         this.content = storyContent.getContent();
+        this.charVideo = storyContent.getCharacter().getCharVideo();
 
 
         this.reactions = new ArrayList<>();

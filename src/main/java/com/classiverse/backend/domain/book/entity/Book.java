@@ -18,7 +18,6 @@ public class Book extends BaseTimeEntity {
     @Column(name = "book_id")
     private Long bookId;
 
-    // FK: Category와 연결
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
@@ -31,10 +30,20 @@ public class Book extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT")
     private String introduction;
 
-    public Book(Category category, String title, String author, String introduction) {
+    // 행성 이미지 URL
+    @Column(name = "planet_image", length = 500)
+    private String planetImage;
+
+    // 책 이미지 URL
+    @Column(name = "book_image", length = 500)
+    private String bookImage;
+
+    public Book(Category category, String title, String author, String introduction, String planetImage, String bookImage) {
         this.category = category;
         this.title = title;
         this.author = author;
         this.introduction = introduction;
+        this.planetImage = planetImage;
+        this.bookImage = bookImage;
     }
 }

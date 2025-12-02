@@ -29,10 +29,20 @@ public class StoryCharacter extends BaseTimeEntity {
 
     private String info;
 
-    public StoryCharacter(Book book, String name, String intro, String info) {
+    // 캐릭터 사진 URL
+    @Column(name = "char_image", length = 500)
+    private String charImage;
+
+    // 캐릭터 동영상 URL
+    @Column(name = "char_video", length = 500)
+    private String charVideo;
+
+    public StoryCharacter(Book book, String name, String intro, String info, String charImage, String charVideo) {
         this.book = book;
         this.name = name;
         this.intro = intro;
         this.info = info;
+        this.charImage = charImage;
+        this.charVideo = charVideo;
     }
 }

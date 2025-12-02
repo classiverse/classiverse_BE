@@ -68,12 +68,14 @@ public class ReadingService {
         // 5. 스토리 해금 로직 실행
         checkAndUnlockNextStory(story, user);
 
-        // 6. 결과 반환 (수정된 DTO 생성자 사용)
+        // 6. 결과 반환
         return new ReadingCompleteDto(
                 story.getTitle(),
                 character.getName(),
                 newClosenessScore,
-                storyIntro.getFinalText() // final_text 반환
+                storyIntro.getFinalText(),
+                character.getCharImage(), // ★ [추가] 여기 이미지를 넣어주세요!
+                story.getBook().getBookId()
         );
     }
     // 해금 조건 체크 및 실행

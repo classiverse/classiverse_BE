@@ -37,6 +37,11 @@ public class User extends BaseTimeEntity {
         this.nickname = nickname;
     }
 
+    // 유저 프로필 이미지 URL
+    @Column(name = "profile_image", length = 500)
+    private String profileImage;
+
+
     public User(String nickname, YnType kakaoUser, YnType appleUser) {
         this.nickname = nickname;
         this.kakaoUser = kakaoUser;

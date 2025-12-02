@@ -12,6 +12,7 @@ public class CharacterDetailResponseDto {
     private Integer closeness; // 친밀도
     private String intro;      // 한줄 소개
     private String info;       // 상세 정보
+    private String charImage;
 
     public CharacterDetailResponseDto(StoryCharacter character, Integer closeness) {
         this.charId = character.getCharId();
@@ -19,5 +20,6 @@ public class CharacterDetailResponseDto {
         this.intro = character.getIntro();
         this.info = character.getInfo();
         this.closeness = closeness != null ? closeness : 0;
+        this.charImage = character.getCharImage();
     }
 }

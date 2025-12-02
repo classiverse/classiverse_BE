@@ -10,10 +10,12 @@ public class CharacterResponseDto {
     private Long charId;
     private String name;
     private Integer closeness;
+    private String charImage;
 
     public CharacterResponseDto(StoryCharacter character, Integer closeness) {
         this.charId = character.getCharId();
         this.name = character.getName();
         this.closeness = closeness != null ? closeness : 0; // default 0%
+        this.charImage = character.getCharImage();
     }
 }

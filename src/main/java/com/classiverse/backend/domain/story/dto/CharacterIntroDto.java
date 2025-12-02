@@ -12,11 +12,13 @@ public class CharacterIntroDto {
     private String characterName;
     private String introText;
     private YnType isLeader; // "Y" or "N"
+    private String charImage;
 
     public CharacterIntroDto(StoryIntro storyIntro) {
         this.charId = storyIntro.getCharacter().getCharId();
         this.characterName = storyIntro.getCharacter().getName();
         this.introText = storyIntro.getIntroText();
         this.isLeader = storyIntro.getIsLeader();
+        this.charImage = storyIntro.getCharacter().getCharImage();
     }
 }

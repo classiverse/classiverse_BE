@@ -12,6 +12,8 @@ public class BookResponseDto {
     private String author;
     private String introduction;
     private String categoryName;
+    private String planetImage;
+    private String bookImage;
 
     public BookResponseDto(Book book) {
         this.bookId = book.getBookId();
@@ -24,5 +26,8 @@ public class BookResponseDto {
         } else {
             this.categoryName = "카테고리 없음";
         }
+
+        this.planetImage = book.getPlanetImage();
+        this.bookImage = book.getBookImage();
     }
 }

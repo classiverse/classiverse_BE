@@ -74,7 +74,8 @@ public class ReadingService {
                 character.getName(),
                 newClosenessScore,
                 storyIntro.getFinalText(),
-                character.getCharImage() // ★ [추가] 여기 이미지를 넣어주세요!
+                character.getCharImage(), // ★ [추가] 여기 이미지를 넣어주세요!
+                story.getBook().getBookId()
         );
     }
     // 해금 조건 체크 및 실행

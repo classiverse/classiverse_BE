@@ -8,8 +8,12 @@ import java.util.Optional;
 
 @Repository
 public interface StoryContentRepository extends JpaRepository<StoryContent, Long> {
-    // 다음 페이지 찾기: 현재 seq보다 큰 것 중 가장 작은(첫 번째) 것
+
+    // (기존) 다음 페이지 찾기
     Optional<StoryContent> findFirstByStory_StoryIdAndCharacter_CharIdAndSeqGreaterThanOrderBySeqAsc(
             Long storyId, Long charId, Integer seq
     );
+
+    // ★ [수정] 스토리 + 캐릭터별 첫 번째 콘텐츠 찾기
+    Optional<StoryContent> findFirstByStory_StoryIdAndCharacter_CharIdOrderBySeqAsc(Long storyId, Long charId);
 }

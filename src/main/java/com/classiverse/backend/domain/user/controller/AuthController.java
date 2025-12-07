@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.Base64;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value; // [추가] 설정값 주입용
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +26,14 @@ public class AuthController {
     private String frontendUrl;
 
     private final AuthService authService;
+
+    // ★ [추가] 개발용 임시 로그인 API
+    // GET /api/auth/dev/login
+    // 카카오 로그인 없이 "멋사" 유저로 로그인된 토큰을 즉시 반환합니다.
+    @GetMapping("/dev/login")
+    public ResponseEntity<UserAuthDto.AuthResponse> devLogin() {
+        return ResponseEntity.ok(authService.devLogin());
+    }
 
     @GetMapping("/kakao/login")
     public ResponseEntity<Void> kakaoLogin(HttpServletRequest request) {
@@ -64,7 +72,7 @@ public class AuthController {
         // [수정] 하드코딩 제거하고 변수(frontendUrl) 사용
         String redirectUrl = String.format(
                 "%s?access=%s&refresh=%s",
-                frontendUrl, // 설정 파일에서 가져온 주소 적용
+                frontendUrl,
                 tokenResponse.getAccessToken(),
                 tokenResponse.getRefreshToken()
         );

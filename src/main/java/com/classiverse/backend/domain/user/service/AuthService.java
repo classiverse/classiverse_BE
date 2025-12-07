@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional; // [추가] 트랜잭션 처리를 위해 필요
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -146,9 +147,45 @@ public class AuthService {
                 .orElseThrow(() -> new IllegalStateException("존재하지 않는 사용자입니다."));
 
         // 4) 해당 유저의 리프레시 토큰 삭제
-        //    - 현재 설계 상 한 유저당 한 개의 리프레시 토큰만 유지하므로
-        //      deleteByUser 로 모두 제거해도 무방합니다.
         userRefreshTokenRepository.deleteByUser(user);
+    }
+
+    // ★ [추가] 개발용 임시 로그인 (백도어)
+    // 카카오 로그인 없이 강제로 토큰을 발급받기 위한 메서드입니다.
+    @Transactional
+    public UserAuthDto.AuthResponse devLogin() {
+        Long devUserId = 123456789L; // 임의의 가짜 카카오 ID
+
+        // 1. 테스트 유저 조회 (없으면 생성)
+        User user = userRepository.findByKakaoUserId(devUserId)
+                .orElseGet(() -> {
+                    // 랜덤 프로필 이미지 선택
+                    int randomIndex = random.nextInt(RANDOM_PROFILE_IMAGES.size());
+                    String selectedImage = RANDOM_PROFILE_IMAGES.get(randomIndex);
+
+                    User newUser = new User(
+                            "멋사", // [요청 반영] 닉네임 "멋사"로 고정
+                            YnType.Y,
+                            YnType.N,
+                            devUserId,
+                            selectedImage
+                    );
+                    return userRepository.save(newUser);
+                });
+
+        // 2. 토큰 발급
+        String accessToken = jwtProvider.generateAccessToken(user);
+        String refreshToken = jwtProvider.generateRefreshToken(user);
+        LocalDateTime refreshExpiresAt = jwtProvider.getExpiry(refreshToken);
+
+        // 3. 리프레시 토큰 저장
+        userRefreshTokenRepository.findByUser(user)
+                .ifPresentOrElse(
+                        entity -> entity.updateToken(refreshToken, refreshExpiresAt),
+                        () -> userRefreshTokenRepository.save(new UserRefreshToken(user, refreshToken, refreshExpiresAt))
+                );
+
+        return new UserAuthDto.AuthResponse(accessToken, refreshToken, user.getNickname());
     }
 
     private KakaoTokenResponse requestKakaoToken(String code) {

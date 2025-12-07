@@ -13,3 +13,6 @@ spring:
 jwt:
   secret: ${JWT_SECRET}
   expiration: 3600000
+
+app:
+  frontend-redirect-url: https://classiverse-fe.vercel.app/login-success

@@ -93,4 +93,9 @@ public class ProfileService {
 
         user.changeNickname(newNickname);
     }
+
+    // 닉네임 중복 확인
+    public boolean checkNicknameDuplicate(String nickname) {
+        return userRepository.existsByNickname(nickname);
+    }
 }

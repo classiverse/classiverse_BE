@@ -4,6 +4,9 @@ import com.classiverse.backend.domain.book.entity.Book;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @NoArgsConstructor
 public class BookResponseDto {
@@ -13,7 +16,7 @@ public class BookResponseDto {
     private String introduction;
     private String categoryName;
     private String planetImage;
-    private String bookImage;
+    private List<String> bookImages;
 
     public BookResponseDto(Book book) {
         this.bookId = book.getBookId();
@@ -28,6 +31,11 @@ public class BookResponseDto {
         }
 
         this.planetImage = book.getPlanetImage();
-        this.bookImage = book.getBookImage();
+
+        // ★ [핵심 수정] 리스트를 "새로운 ArrayList"로 복사해서 끊어내야 합니다!
+        // 이렇게 하면 트랜잭션 안에서 데이터를 싹 가져와서 담아둡니다.
+        this.bookImages = (book.getBookImages() != null)
+                ? new ArrayList<>(book.getBookImages())
+                : new ArrayList<>();
     }
 }

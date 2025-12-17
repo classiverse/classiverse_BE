@@ -33,4 +33,12 @@ public class BookService {
                 .map(BookResponseDto::new)
                 .toList();
     }
+
+    @Transactional(readOnly = true)
+    public BookResponseDto getBook(Long bookId) {
+        Book book = bookRepository.findById(bookId)
+                .orElseThrow(() -> new IllegalArgumentException("책이 없습니다."));
+
+        return new BookResponseDto(book);
+    }
 }

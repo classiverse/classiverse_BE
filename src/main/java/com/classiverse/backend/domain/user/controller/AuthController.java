@@ -21,20 +21,18 @@ public class AuthController {
 
     private static final String KAKAO_STATE_SESSION_KEY = "KAKAO_OAUTH_STATE";
 
-    // [수정] 설정 파일(application.yaml)에서 주소 가져오기
     @Value("${app.frontend-redirect-url}")
     private String frontendUrl;
 
     private final AuthService authService;
 
-    // ★ [추가] 개발용 임시 로그인 API
-    // GET /api/auth/dev/login
-    // 카카오 로그인 없이 "멋사" 유저로 로그인된 토큰을 즉시 반환합니다.
+    // [개발용] 임시 로그인 API
     @GetMapping("/dev/login")
     public ResponseEntity<UserAuthDto.AuthResponse> devLogin() {
         return ResponseEntity.ok(authService.devLogin());
     }
 
+    // [기존] GET 로그인 시작
     @GetMapping("/kakao/login")
     public ResponseEntity<Void> kakaoLogin(HttpServletRequest request) {
         String state = generateState();
@@ -48,6 +46,7 @@ public class AuthController {
                 .build();
     }
 
+    // [기존] GET
     @GetMapping("/kakao/callback")
     public void kakaoCallback(
             @RequestParam("code") String code,
@@ -69,7 +68,6 @@ public class AuthController {
 
         session.removeAttribute(KAKAO_STATE_SESSION_KEY);
 
-        // [수정] 하드코딩 제거하고 변수(frontendUrl) 사용
         String redirectUrl = String.format(
                 "%s?access=%s&refresh=%s",
                 frontendUrl,
@@ -77,6 +75,21 @@ public class AuthController {
                 tokenResponse.getRefreshToken()
         );
         response.sendRedirect(redirectUrl);
+    }
+
+    // 프론트엔드 요청 대응용 POST
+
+    // 1. 요청 Body를 받을 DTO
+    public record KakaoLoginRequest(String authorizationCode) {}
+
+    // 2. 프론트엔드가 인가 코드를 직접 보내주면 토큰을 반환하는 POST 메서드
+    @PostMapping("/kakao/callback")
+    public ResponseEntity<UserAuthDto.AuthResponse> kakaoLoginPost(
+            @RequestBody KakaoLoginRequest request
+    ) {
+        // 기존 서비스 로직 재사용
+        UserAuthDto.AuthResponse response = authService.loginWithKakao(request.authorizationCode());
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/refresh")

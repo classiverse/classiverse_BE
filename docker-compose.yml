@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  my-server:
+    image: my-server  # 빌드된 이미지 이름
+    container_name: my-running-app
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://classiverse-prod-db.cd4i4aicm850.ap-northea...
+      - SPRING_DATASOURCE_USERNAME=admin
+      - SPRING_DATASOURCE_PASSWORD=classiverse
+      - SPRING_DATASOURCE_DRIVER_CLASS_NAME=com.mysql.cj.jdbc.Driver
+      - JWT_SECRET=v3ry-s3cur3-s3cr3t-k3y-f0r-cl4ss1v3rs3-d3v-t3st-k3y-must-b3-l0
+      - JWT_ACCESS_TOKEN_VALIDITY=3600000
+      - JWT_REFRESH_TOKEN_VALIDITY=1209600000
+      - KAKAO_CLIENT_ID=328f2a75113391c0c57338f9e804a4e0
+      - KAKAO_CLIENT_SECRET=a7tYmwTA8f2tf4YHsjHGAEhLpKTUMCY1
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - KAKAO_REDIRECT_URI=https://localhost:5173/auth/kakao/callback
+      - KAKAO_AUTHORIZE_URI=https://kauth.kakao.com/oauth/authorize
+      - KAKAO_TOKEN_URI=https://kauth.kakao.com/oauth/token
+      - KAKAO_USER_INFO_URI=https://kapi.kakao.com/v2/user/me

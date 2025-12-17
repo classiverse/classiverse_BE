@@ -54,10 +54,11 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
 
         // [수정] 허용할 프론트엔드 도메인 (정확한 포트 및 주소 반영)
-        config.setAllowedOrigins(List.of(
+        /*config.setAllowedOrigins(List.of(
                 "http://localhost:5173",             // 로컬 Frontend (Vite 기본 포트)
                 "https://classiverse-fe.vercel.app"  // 배포된 Frontend (Vercel)
-        ));
+        ));*/
+        config.setAllowedOriginPatterns(List.of("*")); // 모든 출처 허용 (개발/디버깅용)
 
         // 2. 허용할 HTTP 메서드
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));

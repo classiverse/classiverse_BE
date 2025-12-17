@@ -8,11 +8,17 @@ import com.classiverse.backend.domain.user.entity.UserRefreshToken;
 import com.classiverse.backend.domain.user.jwt.JwtProvider;
 import com.classiverse.backend.domain.user.repository.UserRefreshTokenRepository;
 import com.classiverse.backend.domain.user.repository.UserRepository;
+// [추가] 카테고리 해제를 위한 임포트
+import com.classiverse.backend.domain.category.repository.CategoryRepository;
+import com.classiverse.backend.domain.unlock.repository.UserCategoryUnlockRepository;
+import com.classiverse.backend.domain.unlock.entity.UserCategoryUnlock;
+import com.classiverse.backend.domain.category.entity.Category;
+
 import java.time.LocalDateTime;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional; // [추가] 트랜잭션 처리를 위해 필요
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -28,6 +34,10 @@ public class AuthService {
     private final UserRepository userRepository;
     private final UserRefreshTokenRepository userRefreshTokenRepository;
     private final JwtProvider jwtProvider;
+
+    // [추가] 회원가입 시 1번 카테고리 자동 해제를 위해 필요
+    private final CategoryRepository categoryRepository;
+    private final UserCategoryUnlockRepository userCategoryUnlockRepository;
 
     private static final List<String> RANDOM_PROFILE_IMAGES = List.of(
             "https://classiverse-storage.s3.ap-northeast-2.amazonaws.com/profile_1.png",
@@ -48,7 +58,7 @@ public class AuthService {
     }
 
     // 카카오 콜백: code 로 토큰 요청 → 유저 정보 조회 → 우리 서비스 로그인/회원가입 처리
-    // 최종적으로 JWT access/refresh 토큰과 닉네임을 반환
+    @Transactional // 트랜잭션 보장
     public UserAuthDto.AuthResponse loginWithKakao(String code) {
         // 1) 인가코드로 카카오 토큰 발급
         KakaoTokenResponse tokenResponse = requestKakaoToken(code);
@@ -82,7 +92,8 @@ public class AuthService {
         return new UserAuthDto.AuthResponse(accessToken, refreshToken, user.getNickname());
     }
 
-    // 리프레시 토큰으로 액세스 토큰 재발급 - 토큰 서명/만료 검증, DB 에 저장된 리프레시 토큰인지 확인
+    // 리프레시 토큰으로 액세스 토큰 재발급
+    @Transactional
     public UserAuthDto.AuthResponse refreshToken(String refreshToken) {
         // 1) 형식/서명/만료 검증
         if (!jwtProvider.isTokenValid(refreshToken)) {
@@ -124,61 +135,60 @@ public class AuthService {
         return new UserAuthDto.AuthResponse(newAccessToken, newRefreshToken, user.getNickname());
     }
 
-    // 로그아웃: 리프레시 토큰을 기반으로 해당 유저의 서버 측 세션(리프레시 토큰) 제거
+    // 로그아웃
+    @Transactional
     public void logout(String refreshToken) {
         if (refreshToken == null || refreshToken.isBlank()) {
             throw new IllegalArgumentException("리프레시 토큰이 비어 있습니다.");
         }
 
-        // 1) 형식/서명/만료 검증
         if (!jwtProvider.isTokenValid(refreshToken)) {
             throw new IllegalArgumentException("유효하지 않은 리프레시 토큰입니다.");
         }
 
-        // 2) 토큰 타입 확인
         String type = jwtProvider.getTokenType(refreshToken);
         if (!"REFRESH".equals(type)) {
             throw new IllegalArgumentException("리프레시 토큰이 아닙니다.");
         }
 
-        // 3) 토큰에서 userId 추출 후 유저 확인
         Long userId = jwtProvider.getUserId(refreshToken);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalStateException("존재하지 않는 사용자입니다."));
 
-        // 4) 해당 유저의 리프레시 토큰 삭제
         userRefreshTokenRepository.deleteByUser(user);
     }
 
     // ★ [추가] 개발용 임시 로그인 (백도어)
-    // 카카오 로그인 없이 강제로 토큰을 발급받기 위한 메서드입니다.
     @Transactional
     public UserAuthDto.AuthResponse devLogin() {
-        Long devUserId = 123456789L; // 임의의 가짜 카카오 ID
+        Long devUserId = 123456789L;
 
         // 1. 테스트 유저 조회 (없으면 생성)
         User user = userRepository.findByKakaoUserId(devUserId)
                 .orElseGet(() -> {
-                    // 랜덤 프로필 이미지 선택
                     int randomIndex = random.nextInt(RANDOM_PROFILE_IMAGES.size());
                     String selectedImage = RANDOM_PROFILE_IMAGES.get(randomIndex);
 
                     User newUser = new User(
-                            "멋사", // [요청 반영] 닉네임 "멋사"로 고정
+                            "멋사",
                             YnType.Y,
                             YnType.N,
                             devUserId,
                             selectedImage
                     );
-                    return userRepository.save(newUser);
+                    User savedUser = userRepository.save(newUser);
+
+                    // [개발용 로그인도 1번 카테고리 해제 필요 시 추가 가능]
+                    // devLogin은 테스트용이므로 필수는 아니지만, 동일 환경을 위해 추가 추천
+                    createDefaultCategoryUnlock(savedUser);
+
+                    return savedUser;
                 });
 
-        // 2. 토큰 발급
         String accessToken = jwtProvider.generateAccessToken(user);
         String refreshToken = jwtProvider.generateRefreshToken(user);
         LocalDateTime refreshExpiresAt = jwtProvider.getExpiry(refreshToken);
 
-        // 3. 리프레시 토큰 저장
         userRefreshTokenRepository.findByUser(user)
                 .ifPresentOrElse(
                         entity -> entity.updateToken(refreshToken, refreshExpiresAt),
@@ -232,22 +242,42 @@ public class AuthService {
 
     private User createUserFromKakao(KakaoUserResponse kakaoUser) {
         Long kakaoUserId = kakaoUser.getId();
-
-        // 초기 가입 시에는 임시 닉네임을 하나 넣음 - 우리 서비스 닉네임과는 별도
         String tempNickname = "클라시버스 유저_" + kakaoUserId;
 
-        // 랜덤으로 하나 뽑기 (0 ~ 3 사이의 난수 생성)
         int randomIndex = random.nextInt(RANDOM_PROFILE_IMAGES.size());
         String selectedImage = RANDOM_PROFILE_IMAGES.get(randomIndex);
 
         User user = new User(
                 tempNickname,
-                YnType.Y,      // kakaoUser = Y
-                YnType.N,      // appleUser = N
+                YnType.Y,
+                YnType.N,
                 kakaoUserId,
-                selectedImage // <-- 여기에 넣어서 저장!
+                selectedImage
         );
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+
+        // 1번 카테고리(오만과 편견) 무조건 해제
+        createDefaultCategoryUnlock(savedUser);
+
+        return savedUser;
+    }
+
+    // 1번 카테고리 해제 헬퍼 메서드
+    private void createDefaultCategoryUnlock(User user) {
+        try {
+            // 1L = 오만과 편견(첫 번째 성운)
+            categoryRepository.findById(1L).ifPresent(firstCategory -> {
+                UserCategoryUnlock defaultUnlock = new UserCategoryUnlock(
+                        user,
+                        firstCategory,
+                        YnType.Y // 잠금 해제
+                );
+                userCategoryUnlockRepository.save(defaultUnlock);
+            });
+        } catch (Exception e) {
+            // 카테고리 데이터가 없는 경우 등 예외 처리 (로그만 남김)
+            System.err.println("⚠️ 기본 카테고리 해제 실패: " + e.getMessage());
+        }
     }
 
     // 카카오 응답 DTO

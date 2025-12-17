@@ -27,7 +27,7 @@ public class AuthController {
     private final AuthService authService;
 
     // [개발용] 임시 로그인 API
-    @GetMapping("/dev/login")
+    /*@GetMapping("/dev/login")
     public ResponseEntity<UserAuthDto.AuthResponse> devLogin() {
         return ResponseEntity.ok(authService.devLogin());
     }
@@ -75,10 +75,9 @@ public class AuthController {
                 tokenResponse.getRefreshToken()
         );
         response.sendRedirect(redirectUrl);
-    }
+    }*/
 
     // 프론트엔드 요청 대응용 POST
-
     // 1. 요청 Body를 받을 DTO
     public record KakaoLoginRequest(String authorizationCode) {}
 

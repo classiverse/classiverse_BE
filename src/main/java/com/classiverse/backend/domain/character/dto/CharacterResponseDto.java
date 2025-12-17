@@ -11,11 +11,13 @@ public class CharacterResponseDto {
     private String name;
     private Integer closeness;
     private String charImage;
+    private Long bookId;
 
     public CharacterResponseDto(StoryCharacter character, Integer closeness) {
         this.charId = character.getCharId();
         this.name = character.getName();
         this.closeness = closeness != null ? closeness : 0; // default 0%
         this.charImage = character.getCharImage();
+        this.bookId = character.getBook().getBookId();
     }
 }
